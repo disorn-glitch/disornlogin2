@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Redirect System</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400&display=swap');
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Kanit', sans-serif;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        /* หน้าที่ 1: หน้า Login (ฉากหลังสะพานภูมิพล) */
+        #login-page {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: url('https://images.unsplash.com/photo-1590301157890-4810ed352733?q=80&w=1920') no-repeat center center/cover;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            padding: 50px 40px;
+            border-radius: 10px;
+            border: 2px solid #000;
+            width: 380px;
+            text-align: center;
+            position: relative;
+        }
+
+        .avatar-circle {
+            width: 90px;
+            height: 90px;
+            background: #000;
+            border-radius: 50%;
+            position: absolute;
+            top: -45px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 3px solid #fff;
+        }
+
+        .avatar-circle::after {
+            content: '👤';
+            font-size: 45px;
+        }
+
+        .input-group {
+            margin-top: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            border-radius: 25px;
+            border: 1px solid #666;
+            background: rgba(255, 255, 255, 0.9);
+            outline: none;
+            font-size: 16px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            margin-top: 20px;
+            border-radius: 30px;
+            border: none;
+            background: linear-gradient(90deg, #b4a7ff, #d18ff0);
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 18px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        /* หน้าที่ 2: หน้า Loading (ฉากหลังวัดพระแก้ว) */
+        #loading-page {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: url('https://images.unsplash.com/photo-1565538810643-95bdb810003b?q=80&w=1920') no-repeat center center/cover;
+        }
+
+        .loading-box {
+            background: rgba(255, 215, 0, 0.4);
+            backdrop-filter: blur(5px);
+            padding: 40px;
+            border-radius: 20px;
+            width: 500px;
+            text-align: center;
+        }
+
+        .status-pill {
+            background: #b4a7ff;
+            padding: 12px;
+            border-radius: 30px;
+            border: 2px solid #000;
+            font-weight: bold;
+            display: inline-block;
+            width: 80%;
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .cat-sticker {
+            position: absolute;
+            right: -15px;
+            top: -35px;
+            font-size: 45px;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 45px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 25px;
+            border: 2px solid #000;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        #bar-fill {
+            width: 0%;
+            height: 100%;
+            background: #b4a7ff;
+            transition: width 0.05s linear;
+        }
+
+        .percent-label {
+            position: absolute;
+            width: 100%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        #error-text {
+            color: #ff0000;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px white;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="login-page">
+        <div class="login-card">
+            <div class="avatar-circle"></div>
+            <div class="input-group">
+                <input type="text" id="user" placeholder="ชื่อผู้ใช้">
+                <input type="password" id="pass" placeholder="รหัสผ่าน">
+            </div>
+            <div id="error-text">❌ รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่</div>
+            <button class="btn-submit" onclick="startProcess()">เข้าสู่ระบบ</button>
+        </div>
+    </div>
+
+    <div id="loading-page">
+        <div class="loading-box">
+            <div class="status-pill">
+                เข้าสู่ระบบ
+                <span class="cat-sticker">🐱❤️</span>
+            </div>
+            
+            <div class="progress-container">
+                <div class="percent-label" id="percent-txt">0%</div>
+                </div>
+
+            <div class="progress-container">
+                <div id="bar-fill"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- ตั้งค่ารหัสผ่านและเว็บที่จะไปที่นี่ ---
+        const TARGET_PASSWORD = "1234"; 
+        const REDIRECT_URL = "https://disorn-glitch.github.io/disorn_menu/"; // เปลี่ยนเป็นเว็บที่ต้องการ
+        // ------------------------------------
+
+        // รองรับปุ่ม Enter
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                startProcess();
+            }
+        });
+
+        function startProcess() {
+            const passValue = document.getElementById('pass').value;
+            const errorElement = document.getElementById('error-text');
+
+            if (passValue === TARGET_PASSWORD) {
+                errorElement.style.display = 'none';
+                runLoadingAnimation();
+            } else {
+                errorElement.style.display = 'block';
+                document.getElementById('pass').value = '';
+            }
+        }
+
+        function runLoadingAnimation() {
+            // สลับหน้าจอ
+            document.getElementById('login-page').style.display = 'none';
+            document.getElementById('loading-page').style.display = 'flex';
+
+            let count = 0;
+            const bar = document.getElementById('bar-fill');
+            const txt = document.getElementById('percent-txt');
+
+            const timer = setInterval(() => {
+                if (count >= 100) {
+                    clearInterval(timer);
+                    
+                    // เมื่อครบ 100% แล้ว ให้รอ 1 วินาที (1000ms) ก่อนเปลี่ยนเว็บ
+                    setTimeout(() => {
+                        window.location.href = REDIRECT_URL;
+                    }, 1000);
+
+                } else {
+                    count++;
+                    bar.style.width = count + '%';
+                    txt.innerText = count + '%';
+                }
+            }, 25); // ความเร็วในการโหลด (25ms ต่อ 1%)
+        }
+    </script>
+</body>
+</html>
