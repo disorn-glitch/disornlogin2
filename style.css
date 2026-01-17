@@ -18,7 +18,7 @@ body, html {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background: url('https://lh3.googleusercontent.com/drive-storage/AJQWtBP28OcmhX09Rip9LN1MLFRbHJpq_0fhhhWk0Vo4csu5ylckgQYZD5_A1D29nlfbfzS6LZHgWIctc8O19YhhBfIwdWNtfQOEqP342bzUvEugdhcRew=h360') no-repeat center center/cover;
+   background: url('./assets/ChatGPT Image 16 ม.ค. 2569 22_16_05.png.jpg') no-repeat center center/cover;
 }
 
 .login-card {
@@ -87,7 +87,7 @@ input {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background: url('https://lh3.googleusercontent.com/drive-storage/AJQWtBOAPSX3iAIHCPU4pTH-FekaZME-EHKg68A5cu-jvgfW3MZATIl5Yb7ku0SWsJyh9y28vb3qMgBcIvRUeDZy8QVIG1LuXwEZjBQQL1B0TskWN2wfgw=h360') no-repeat center center/cover;
+  background: url('./assets/ChatGPT Image 16 ม.ค. 2569 21_59_39.png.jpg') no-repeat center center/cover;;
 }
 
 .loading-box {
