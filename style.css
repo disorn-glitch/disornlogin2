@@ -18,7 +18,8 @@ body, html {
     justify-content: center;
     align-items: center;
     height: 100vh;
-   background: url('./assets/ChatGPT Image 16 ม.ค. 2569 22_16_05.png.jpg') no-repeat center center/cover;
+   background: url('https://drive.google.com/file/d/1eJjh2MSDhJms8q4Fd91hxTeleH8RVR6_/view?usp=sharing') no-repeat center center/cover;
+}
 }
 
 .login-card {
@@ -87,7 +88,7 @@ input {
     justify-content: center;
     align-items: center;
     height: 100vh;
-  background: url('./assets/ChatGPT Image 16 ม.ค. 2569 21_59_39.png.jpg') no-repeat center center/cover;;
+   background: url('https://drive.google.com/file/d/1xYXv15sEilzd0XzYVIy6ttpXGpNy32H0/view?usp=sharing') no-repeat center center/cover;
 }
 
 .loading-box {
